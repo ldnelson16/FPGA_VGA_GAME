@@ -2,7 +2,8 @@
 `define MAIN
 
 `include "vga_controller.sv"
-`include "PLL/PLL.v"
+`include "Clocking/PLL.v"
+`include "Clocking/refresh_clock.sv"
 
 module main(
   input wire MAX10_CLK1_50, 
@@ -19,11 +20,10 @@ module main(
 
   // Counter for Refresh Rate 60 Hz clock
   wire refresh;
-  parameter REFRESH_MAX = (50000000 / 60);
-  reg[19:0] refresh_counter; // counter
-  always @ (posedge MAX10_CLK1_50) begin
-    refresh_counter <= (refresh_counter == REFRESH_MAX) ? 0 : (refresh_counter + 1);
-  end; assign wire = (refresh_counter == REFRESH_MAX);
+  refresh_clock refresh_clock (
+    .clk0(MAX10_CLK1_50),
+    .refresh_clock(refresh)
+  );
 
   // test PLL with 1Hz signal
   parameter MAX = 147140000;
