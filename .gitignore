@@ -1,0 +1,14 @@
+transcript
+*.wlf
+work/*
+wlft*
+simulation/*
+*.mti
+*.qpf
+*.mpf
+db/*
+greybox_tmp/*
+incremental_db/*
+*.qsf
+*.bak
+output_files/*
