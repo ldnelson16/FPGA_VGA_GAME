@@ -12,3 +12,4 @@ incremental_db/*
 *.qsf
 *.bak
 output_files/*
+modelsim_project/*
