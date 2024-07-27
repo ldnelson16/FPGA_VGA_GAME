@@ -13,5 +13,3 @@ incremental_db/*
 *.bak
 output_files/*
 modelsim_project/*
-*.ppf
-*.qip
