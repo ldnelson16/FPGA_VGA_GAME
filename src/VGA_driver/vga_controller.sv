@@ -7,8 +7,8 @@
 module vga_controller(
     input wire clk,           // 25 MHz clock
     input wire refresh,           // 60 Hz Refresh Rate signal
-    input Frame frame_a, // frame A
-    input Frame frame_b, // frame B
+    Frame frame_a, // frame A
+    Frame frame_b, // frame B
     output reg hsync,         // Horizontal sync signal
     output reg vsync,         // Vertical sync signal
     output reg [3:0] red,     // 4-bit red color signal
@@ -22,11 +22,11 @@ module vga_controller(
 
     // HSYNC and VSYNC signals
     always @(posedge clk) begin
-        if (h_count < H_TOTAL) begin
+        if (h_count < `H_TOTAL) begin
             h_count <= h_count + 1;
         end else begin
             h_count <= 0;
-            if (v_count < V_TOTAL) begin
+            if (v_count < `V_TOTAL) begin
                 v_count <= v_count + 1;
             end else begin
                 v_count <= 0;
@@ -42,7 +42,7 @@ module vga_controller(
 
     // Update hsync pulse
     always @(posedge clk) begin
-        if (h_count >= (H_VISIBLE + H_FRONT_PORCH) && h_count < (H_VISIBLE + H_FRONT_PORCH + H_SYNC_PULSE)) begin
+        if (h_count >= (`H_VISIBLE + `H_FRONT_PORCH) && h_count < (`H_VISIBLE + `H_FRONT_PORCH + `H_SYNC_PULSE)) begin
             hsync <= 0;  // HSYNC pulse (active low)
         end else begin
             hsync <= 1;  // HSYNC inactive (high)
@@ -51,7 +51,7 @@ module vga_controller(
 
     // Update vsync pulse
     always @(posedge clk) begin
-        if (v_count >= (V_VISIBLE + V_FRONT_PORCH) && v_count < (V_VISIBLE + V_FRONT_PORCH + V_SYNC_PULSE)) begin
+        if (v_count >= (`V_VISIBLE + `V_FRONT_PORCH) && v_count < (`V_VISIBLE + `V_FRONT_PORCH + `V_SYNC_PULSE)) begin
             vsync <= 0;  // VSYNC pulse (active low)
         end else begin
             vsync <= 1;  // VSYNC inactive (high)
@@ -60,10 +60,15 @@ module vga_controller(
 
     // Pixel data (example: white screen)
     always @(posedge clk) begin
-        if (h_count < H_VISIBLE && v_count < V_VISIBLE) begin
-            red <= (TOGGLE_STATE ? frame_b.get_pixel(v_count, h_count).r : frame_a.get_pixel(v_count, h_count).r); 
-            green <= (TOGGLE_STATE ? frame_b.get_pixel(v_count, h_count).r : frame_a.get_pixel(v_count, h_count).r); 
-            blue <= (TOGGLE_STATE ? frame_b.get_pixel(v_count, h_count).r : frame_a.get_pixel(v_count, h_count).r);   
+        if (h_count < `H_VISIBLE && v_count < `V_VISIBLE) begin
+            // temp signals
+            Pixel pixel_a;
+            Pixel pixel_b;
+            frame_a.get_pixel(v_count, h_count, pixel_a);
+            frame_b.get_pixel(v_count, h_count, pixel_b);
+            red <= (TOGGLE_STATE ? pixel_b.r : pixel_a.r); 
+            green <= (TOGGLE_STATE ? pixel_b.g : pixel_a.g); 
+            blue <= (TOGGLE_STATE ? pixel_b.b : pixel_a.b);   
         end else begin
             red <= 4'h0; 
             green <= 4'h0; 
