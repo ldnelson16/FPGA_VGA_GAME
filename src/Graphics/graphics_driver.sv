@@ -11,14 +11,18 @@ module graphics_driver (
   // handheld controller inputs
 
   // outputs
-  output Frame frame_a,
-  output Frame frame_b
+  Frame frame_a,
+  Frame frame_b
 );
   // Initial frame data
   initial begin
+    Pixel black_pixel;
+    black_pixel.r = 0;
+    black_pixel.g = 0;
+    black_pixel.b = 0;
     for (int i=0; i<`V_FRAME_HT; ++i) begin
       for (int j=0; j<`H_FRAME_HT; ++j) begin
-        frame_a.update_pixel(i,j,`{r:0,g:0,b:0});
+        frame_a.update_pixel(i,j,black_pixel); // set all pixels black initially
       end
     end
   end
