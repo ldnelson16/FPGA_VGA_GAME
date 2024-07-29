@@ -32,7 +32,7 @@ module main(
 
   // graphics driver, determines what is in frame_a/b
   graphics_driver GRAPHICS_DRIVER (
-    .clk(VGA_clock),
+    .clk(VGA_clk),
     .refresh(refresh),
     .rst(rst),
     .frame_a(frame_a),
@@ -41,15 +41,15 @@ module main(
 
   // vga controller
   vga_controller VGA_CONTROLLER (
-    .clk(VGA_clock),
+    .clk(VGA_clk),
     .refresh(refresh),
     .frame_a(frame_a),
     .frame_b(frame_b),
     .hsync(VGA_HS),
     .vsync(VGA_VS),
-    .red({VGA_R[0], VGA_R[1], VGA_R[2], VGA_R[3]}),
-    .green({VGA_G[0], VGA_G[1], VGA_G[2], VGA_G[3]}),
-    .blue({VGA_B[0], VGA_B[1], VGA_B[2], VGA_B[3]})
+    .red({VGA_R[3], VGA_R[2], VGA_R[1], VGA_R[0]}),
+    .green({VGA_G[3], VGA_G[2], VGA_G[1], VGA_G[0]}),
+    .blue({VGA_B[3], VGA_B[2], VGA_B[1], VGA_B[0]})
   );
 endmodule 
 
