@@ -13,7 +13,8 @@ module vga_controller(
     output reg vsync,         // Vertical sync signal
     output reg [3:0] red,     // 4-bit red color signal
     output reg [3:0] green,   // 4-bit green color signal
-    output reg [3:0] blue     // 4-bit blue color signal
+    output reg [3:0] blue,     // 4-bit blue color signal
+    output active_frame // 0 == frame_a, 1 == frame_b
 );
 
     // Counters
@@ -35,10 +36,11 @@ module vga_controller(
     end
 
     // Toggle state to display the two different frames
-    reg TOGGLE_STATE = 0; // 0 == frame_b, 1 == frame_b
+    reg TOGGLE_STATE = 0; // 0 == frame_a, 1 == frame_b
     always @ (posedge refresh) begin
         TOGGLE_STATE <= ~TOGGLE_STATE; // toggle every refresh rate
     end
+    assign active_frame = TOGGLE_STATE;
 
     // Update hsync pulse
     always @(posedge clk) begin
@@ -58,17 +60,16 @@ module vga_controller(
         end
     end
 
-    // Pixel data (example: white screen)
+    // Pixel data 
     always @(posedge clk) begin
         if (h_count < `H_VISIBLE && v_count < `V_VISIBLE) begin
             // temp signals
-            Pixel pixel_a;
-            Pixel pixel_b;
-            frame_a.get_pixel(v_count, h_count, pixel_a);
-            frame_b.get_pixel(v_count, h_count, pixel_b);
-            red <= (TOGGLE_STATE ? pixel_b.r : pixel_a.r); 
-            green <= (TOGGLE_STATE ? pixel_b.g : pixel_a.g); 
-            blue <= (TOGGLE_STATE ? pixel_b.b : pixel_a.b);   
+            Pixel pixel_a, pixel_b;
+            frame_a.get_pixel(((v_count * `FRACTIONAL_RESOLUTION) / 100), ((h_count * `FRACTIONAL_RESOLUTION) / 100), pixel_a);
+            frame_b.get_pixel(((v_count * `FRACTIONAL_RESOLUTION) / 100), ((h_count * `FRACTIONAL_RESOLUTION) / 100), pixel_b);
+            red <= TOGGLE_STATE ? pixel_b.r : pixel_a.r; 
+            green <= TOGGLE_STATE ? pixel_b.g : pixel_a.g; 
+            blue <= TOGGLE_STATE ? pixel_b.b : pixel_a.b;   
         end else begin
             red <= 4'h0; 
             green <= 4'h0; 
