@@ -8,8 +8,8 @@
 `include "Graphics/graphics_driver.sv"
 
 module main(
-  input wire MAX10_CLK1_50, 
-  input wire KEY[0], // must determine this input
+  input wire MAX10_CLK1_50,  
+  input wire left_button, right_button, jump; // input buttons
   output reg[3:0] VGA_R, VGA_G, VGA_B, // RGB
   output reg VGA_HS, VGA_VS,
   output[9:0] LEDR
@@ -46,6 +46,9 @@ module main(
     .frame_a(frame_a),
     .frame_b(frame_b)
   );
+
+  // input handler / driver 
+  
 
   // vga controller
   vga_controller VGA_CONTROLLER (
