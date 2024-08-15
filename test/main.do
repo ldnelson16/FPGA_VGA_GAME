@@ -1,0 +1,3 @@
+vlog test/TestBenches/TestBench_refresh_clock.sv
+vsim modelsim_project.TestBench_refresh_clock
+run 1sec
